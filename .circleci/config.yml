@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  shellcheck:
+    docker:
+      - image: koalaman/shellcheck-alpine:stable
+    steps:
+      - checkout
+      - run:
+          name: Check Scripts
+          command: |
+            mkdir /results/
+            find . -type f -name '*.sh' | wc -l | tee test-output1.log >/results/test-output1.log
+            find . -type f -name '*.sh' | xargs shellcheck --external-sources | tee test-output2.log >/results/test-output2.log
+      - store_artifacts:
+          path: /results/
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - shellcheck
