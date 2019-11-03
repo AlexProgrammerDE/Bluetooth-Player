@@ -1,0 +1,15 @@
+[Unit]
+Description=Bluetooth-Player
+After=network-online.target network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+KillMode=process
+ExecStart=/bin/dash -c /usr/src/pre-start.sh
+
+[Install]
+WantedBy=multi-user.target
+Alias=bluetooth-player.service
