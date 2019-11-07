@@ -1,3 +1,5 @@
 title: Bluetooth-Player
+description: Bluetooth-Player gives you the code for playing music over bluetooth to your Pi. 
 show_downloads: true
+google_analytics: 
 theme: jekyll-theme-cayman
