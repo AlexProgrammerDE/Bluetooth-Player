@@ -7,18 +7,18 @@ set -o pipefail
 export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 export UDEV=1
 
-if [[ -z "$BLUETOOTH_DEVICE_NAME" ]]; then
+if [[ -z "$1" ]]; then
   BLUETOOTH_DEVICE_NAME=$(printf "raspberrypi")
 fi
 
 # Set the system volume here
-SYSTEM_OUTPUT_VOLUME="${SYSTEM_OUTPUT_VOLUME:-100}"
+SYSTEM_OUTPUT_VOLUME="${3:-100}"
 echo "$SYSTEM_OUTPUT_VOLUME" > /usr/src/system_output_volume
 printf "Setting output volume to %s%%\n" "$SYSTEM_OUTPUT_VOLUME"
 amixer sset PCM,0 "$SYSTEM_OUTPUT_VOLUME%" > /dev/null &
 
 # Set the volume of the connection notification sounds here
-CONNECTION_NOTIFY_VOLUME="${CONNECTION_NOTIFY_VOLUME:-75}"
+CONNECTION_NOTIFY_VOLUME="${4:-75}"
 echo "$CONNECTION_NOTIFY_VOLUME" > /usr/src/connection_notify_volume
 printf "Connection notify volume is %s%%\n" "$CONNECTION_NOTIFY_VOLUME"
 
