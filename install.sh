@@ -62,23 +62,27 @@ if [[ -z "$CONNECTION_NOTIFY_VOLUME" ]]; then
 CONNECTION_NOTIFY_VOLUME=75
 fi
 
-cat <<EOF >/usr/src/pre-start.sh
-#!/bin/sh
+cat <<EOF >/etc/systemd/system/bluetooth-player.service
+[Unit]
+Description=Bluetooth-Player
+After=network-online.target network.target
+StartLimitIntervalSec=0
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
-   exit 1
-else
-export BLUETOOTH_DEVICE_NAME="$BLUETOOTH_DEVICE_NAME"
-export BLUETOOTH_PIN_CODE="$BLUETOOTH_PIN_CODE"
-export SYSTEM_OUTPUT_VOLUME="$SYSTEM_OUTPUT_VOLUME"
-export CONNECTION_NOTIFY_VOLUME="$CONNECTION_NOTIFY_VOLUME"
-source /usr/src/start.sh
-fi
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+KillMode=process
+Environment="BLUETOOTH_DEVICE_NAME=$BLUETOOTH_DEVICE_NAME"
+Environment="BLUETOOTH_PIN_CODE=$BLUETOOTH_PIN_CODE"
+Environment="SYSTEM_OUTPUT_VOLUME=$SYSTEM_OUTPUT_VOLUME"
+Environment="CONNECTION_NOTIFY_VOLUME=$CONNECTION_NOTIFY_VOLUME"
+ExecStart=/bin/sh -c /usr/src/start.sh $BLUETOOTH_DEVICE_NAME $BLUETOOTH_PIN_CODE $SYSTEM_OUTPUT_VOLUME $CONNECTION_NOTIFY_VOLUME
+
+[Install]
+WantedBy=multi-user.target
+Alias=bluetooth-player.service
 EOF
-chmod +x /usr/src/pre-start.sh
-
-sudo cp -r ./bluetooth-player.service /etc/systemd/system/
 
 sudo systemctl enable bluetooth-player.service
 sudo systemctl start bluetooth-player.service
